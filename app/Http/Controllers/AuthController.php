@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\View;
 
 class AuthController extends Controller
 {
-//fff
+//ffff
 
 
 
