@@ -3,45 +3,63 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\Auth\LoginRepuest;
-use App\Http\Requests\Auth\AuthService;
-use App\Services\AuthService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\View;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    private AuthService $authService;
-
-    public function __construct(AuthService $authService)
+    public function showLoginForm()
     {
-        $this->authService = $authService;
-    }
-
-    public function  showRegister()
-    {
-        return View::make('auth.register');
-
-    }
-
-    public function  showLogin()
-    {
-        return View::make('auth.login');
+        return view('auth.login');
     }
 
     public function login(Request $request)
     {
-        $data =$request->validate([
-            'email'=>['required'],
-            'password'=>['required']
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
         ]);
-        if(Auth::attempt($data)) {
+
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return Request::route('dashboard');
+            return redirect()->intended('dashboard');
         }
+
+        return back()->withErrors([
+            'email' => 'Неверный email или пароль.',
+        ]);
     }
 
+    public function showRegistrationForm()
+    {
+        return view('auth.register');
+    }
+
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6|confirmed',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        Auth::login($user);
+
+        return redirect()->route('dashboard');
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/');
+    }
 }
-
-
