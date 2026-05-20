@@ -33,3 +33,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/comments/create', [CommentController::class, 'create'])->name('comments.create');
     Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
 });
+
+
+Route::get('/role-request/create', [RoleRequestController::class, 'create'])->name('role-request.create');
+Route::post('/role-request', [RoleRequestController::class, 'store'])->name('role-request.store');
+Route::get('/role-request/my', [RoleRequestController::class, 'myRequests'])->name('role-request.my-requests');
+
+
+
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('dashboard');
+
+    Route::get('/role-requests', [AdminRoleRequestController::class, 'index'])->name('role-requests.index');
+    Route::get('/role-requests/{roleRequest}', [AdminRoleRequestController::class, 'show'])->name('role-requests.show');
+    Route::post('/role-requests/{roleRequest}/process', [AdminRoleRequestController::class, 'process'])->name('role-requests.process');
+});

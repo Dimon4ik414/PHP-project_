@@ -1,30 +1,16 @@
 @extends('layouts.app')
 @section('content')
     <style>
-        body {
-            background: #1a1a2e;
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .admin-wrapper {
-            display: flex;
-            min-height: 100vh;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background: #1a1a2e; }
+        .admin-wrapper { display: flex; min-height: 100vh; }
         .sidebar {
             width: 250px;
             background: #16213e;
             color: #fff;
             padding: 30px 20px;
         }
-
-        .sidebar h2 {
-            font-size: 20px;
-            margin-bottom: 30px;
-            color: #e94560;
-        }
-
+        .sidebar h2 { font-size: 20px; margin-bottom: 30px; color: #e94560; }
         .sidebar a {
             display: block;
             color: #a0a0b0;
@@ -34,34 +20,11 @@
             margin-bottom: 5px;
             transition: 0.2s;
         }
-
-        .sidebar a:hover, .sidebar a.active {
-            background: #e94560;
-            color: #fff;
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 40px;
-            color: #fff;
-        }
-
-        .main-content h1 {
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
-
-        .main-content .subtitle {
-            color: #a0a0b0;
-            margin-bottom: 30px;
-        }
-
-        .cards {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
+        .sidebar a:hover, .sidebar a.active { background: #e94560; color: #fff; }
+        .main-content { flex: 1; padding: 40px; color: #fff; }
+        .main-content h1 { font-size: 28px; margin-bottom: 5px; }
+        .main-content .subtitle { color: #a0a0b0; margin-bottom: 30px; }
+        .cards { display: flex; gap: 20px; flex-wrap: wrap; }
         .card {
             background: #16213e;
             padding: 25px;
@@ -70,38 +33,29 @@
             min-width: 180px;
             text-align: center;
         }
-
-        .card h3 {
-            font-size: 36px;
-            color: #e94560;
-            margin-bottom: 5px;
-        }
-
-        .card p {
-            color: #a0a0b0;
-            font-size: 14px;
-        }
-
-        .logout-btn {
-            margin-top: 30px;
-        }
-
+        .card h3 { font-size: 36px; color: #e94560; margin-bottom: 5px; }
+        .card p { color: #a0a0b0; font-size: 14px; }
+        .logout-btn { margin-top: 30px; }
         .logout-btn button {
-            background: #e94560;
-            border: none;
-            color: #fff;
+            background: transparent;
+            color: #e94560;
+            border: 2px solid #e94560;
             padding: 12px 28px;
             border-radius: 8px;
             font-size: 15px;
             cursor: pointer;
+            transition: 0.2s;
         }
+        .logout-btn button:hover { background: #e94560; color: #fff; }
     </style>
 
     <div class="admin-wrapper">
         <aside class="sidebar">
             <h2>Админ-панель</h2>
             <a href="{{ route('admin.dashboard') }}" class="active">Дашборд</a>
-            <a href="{{ route('admin.role-requests.index') }}">Запросы ролей</a>
+            <a href="#пустышка">Запросы ролей</a>
+            <a href="#пустышка">Пользователи</a>
+            <a href="#пустышка">Комментарии</a>
         </aside>
 
         <main class="main-content">

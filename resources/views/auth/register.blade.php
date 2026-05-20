@@ -1,124 +1,76 @@
 @extends('layouts.app')
 @section('content')
     <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .card-body {
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background: #1a1a2e; }
+        .auth-container {
             max-width: 450px;
-            margin: 50px auto;
-            background: #fff;
+            margin: 60px auto;
+            background: #16213e;
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
         }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .form-title {
+        .auth-container h2 {
             text-align: center;
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 10px;
+            color: #fff;
+            font-size: 26px;
+            margin-bottom: 25px;
         }
-
-        .mb-3 {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .mb-3 label {
-            color: #555;
-            font-weight: 500;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
+        form { display: flex; flex-direction: column; gap: 18px; }
+        .mb-3 { display: flex; flex-direction: column; }
+        .mb-3 label { color: #a0a0b0; font-size: 13px; margin-bottom: 5px; }
         .mb-3 input {
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-            outline: none;
+            padding: 10px 14px;
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            font-size: 15px;
+            background: #1a1a2e;
+            color: #fff;
         }
-
-        .mb-3 input:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .btn-register {
+        .mb-3 input:focus { border-color: #e94560; outline: none; }
+        .btn {
+            width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #e94560;
             color: #fff;
             border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: 600;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 10px;
+            transition: 0.2s;
+            margin-top: 5px;
         }
-
-        .btn-register:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .login-link {
-            text-align: center;
-            margin-top: 20px;
-            color: #666;
-        }
-
-        .login-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .login-link a:hover {
-            text-decoration: underline;
-        }
+        .btn:hover { opacity: 0.9; transform: scale(1.02); }
+        .link { text-align: center; margin-top: 18px; font-size: 14px; color: #a0a0b0; }
+        .link a { color: #e94560; text-decoration: none; font-weight: bold; }
     </style>
 
-    <div class="card-body">
-        <h2 class="form-title">Регистрация</h2>
-
-        <form method="POST" action="{{route('register.post')}}">
+    <div class="auth-container">
+        <h2>Регистрация</h2>
+        <form method="POST" action="{{ route('register.post') }}">
             @csrf
-
             <div class="mb-3">
                 <label>Имя</label>
-                <input type="text" name="name" placeholder="Введите ваше имя" value="{{old('name')}}">
+                <input type="text" name="name" placeholder="Введите ваше имя" value="{{ old('name') }}">
             </div>
-
             <div class="mb-3">
                 <label>Email</label>
-                <input type="email" name="email" placeholder="Введите ваш email" value="{{old('email')}}">
+                <input type="email" name="email" placeholder="Введите ваш email" value="{{ old('email') }}">
             </div>
-
             <div class="mb-3">
                 <label>Пароль</label>
                 <input type="password" name="password" placeholder="Придумайте пароль">
             </div>
-
             <div class="mb-3">
                 <label>Подтверждение пароля</label>
                 <input type="password" name="password_confirmation" placeholder="Повторите пароль">
             </div>
-
-            <button type="submit" class="btn-register">Зарегистрироваться</button>
+            <button type="submit" class="btn">Зарегистрироваться</button>
         </form>
-
-        <div class="login-link">
-            Уже есть аккаунт? <a href="{{route('login')}}">Войти</a>
+        <div class="link">
+            Уже есть аккаунт? <a href="{{ route('login') }}">Войти</a>
         </div>
     </div>
 @endsection
