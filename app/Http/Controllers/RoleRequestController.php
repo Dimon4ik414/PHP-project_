@@ -2,72 +2,50 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\RoleRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
 class RoleRequestController extends Controller
 {
+
     public function create()
     {
         $user = Auth::user();
         $availableRoles = RoleRequest::getAvailableRoles($user->role);
-        $hasPendingRequest = RoleRequest::where('user_id', $user->id)
+        $hasPendingRequest = RoleRequest::where('user_id', Auth::id())
             ->where('status', 'pending')
             ->exists();
 
-        return view('role-requests.create', compact('availableRoles', 'hasPendingRequest'));
+        return view('role-request.create', compact('user', 'availableRoles', 'hasPendingRequest'));
     }
-
 
     public function store(Request $request)
     {
-        $user = Auth::user();
-
-        $hasPendingRequest = RoleRequest::where('user_id', $user->id)
-            ->where('status', 'pending')
-            ->exists();
-
-        if ($hasPendingRequest) {
-            return back()->with('error', 'У вас уже есть активный запрос на повышение роли.');
-        }
-
-        $availableRoles = RoleRequest::getAvailableRoles($user->role);
-
-        $request->validate([
-            'requested_role' => [
-                'required',
-                Rule::in($availableRoles),
-            ],
-            'reason' => 'required|min:10|max:500',
-        ], [
-            'requested_role.required' => 'Выберите желаемую роль.',
-            'requested_role.in' => 'Выбранная роль недоступна.',
-            'reason.required' => 'Укажите причину повышения роли.',
-            'reason.min' => 'Причина должна содержать минимум 10 символов.',
-            'reason.max' => 'Причина не должна превышать 500 символов.',
+        $validated = $request->validate([
+            'requested_role' => 'required|string',
+            'reason' => 'nullable|string|max:1000',
         ]);
 
         RoleRequest::create([
-            'user_id' => $user->id,
-            'current_role' => $user->role,
-            'requested_role' => $request->requested_role,
-            'reason' => $request->reason,
-            'status' => 'pending'
+            'user_id' => Auth::id(),
+            'current_role' => Auth::user()->role,
+            'requested_role' => $validated['requested_role'],
+            'reason' => $validated['reason'] ?? null,
+            'status' => 'pending',
         ]);
 
         return redirect()->route('role-request.my-requests')
-            ->with('success', 'Запрос на повышение роли успешно отправлен.');
+            ->with('success', 'Запрос отправлен на рассмотрение');
     }
 
     public function myRequests()
     {
-        $user = Auth::user();
-        $requests = RoleRequest::where('user_id', $user->id)
+        $requests = RoleRequest::where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('role-requests.my-requests', compact('requests'));
+        return view('role-request.my-requests', compact('requests'));
     }
 }

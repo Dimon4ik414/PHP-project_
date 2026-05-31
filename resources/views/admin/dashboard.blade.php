@@ -53,7 +53,7 @@
         <aside class="sidebar">
             <h2>Админ-панель</h2>
             <a href="{{ route('admin.dashboard') }}" class="active">Дашборд</a>
-            <a href="#пустышка">Запросы ролей</a>
+            <a href="{{ route('admin.role-requests.index') }}">Запросы ролей</a>
             <a href="#пустышка">Пользователи</a>
             <a href="#пустышка">Комментарии</a>
         </aside>

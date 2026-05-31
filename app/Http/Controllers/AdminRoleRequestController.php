@@ -1,7 +1,6 @@
 <?php
 
-
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\RoleRequest;
@@ -9,26 +8,23 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class RoleRequestController extends Controller
+class AdminRoleRequestController extends Controller
 {
-    // Список всех запросов
     public function index()
     {
         $requests = RoleRequest::with(['user', 'processedBy'])
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        return view('admin.role-requests.index', compact('requests'));
+        return view('admin.index', compact('requests'));
     }
 
-    // Просмотр деталей запроса
     public function show(RoleRequest $roleRequest)
     {
-        $roleRequest->load(['user', 'processedBy']);
-        return view('admin.role-requests.show', compact('roleRequest'));
+        $roleRequest->load(['user', 'processedBy', 'comments.user']);
+        return view('admin.show', compact('roleRequest'));
     }
 
-    // Обработка запроса (одобрение/отклонение)
     public function process(Request $request, RoleRequest $roleRequest)
     {
         $validated = $request->validate([
@@ -45,7 +41,6 @@ class RoleRequestController extends Controller
         $roleRequest->admin_comment = $validated['admin_comment'] ?? null;
         $roleRequest->processed_at = now();
 
-        // Если запрос одобрен, повышаем роль пользователя
         if ($validated['action'] === 'approved') {
             $user = User::find($roleRequest->user_id);
             $user->role = $roleRequest->requested_role;
@@ -54,13 +49,38 @@ class RoleRequestController extends Controller
 
         $roleRequest->save();
 
-        // Здесь можно отправить уведомление пользователю
-
         $message = $validated['action'] === 'approved'
             ? 'Запрос одобрен. Роль пользователя повышена.'
             : 'Запрос отклонен.';
 
         return redirect()->route('admin.role-requests.index')
             ->with('success', $message);
+    }
+
+    public function addComment(Request $request, RoleRequest $roleRequest)
+    {
+        $validated = $request->validate([
+            'body' => 'required|string|max:1000',
+        ]);
+
+        \App\Models\Comment::create([
+            'role_request_id' => $roleRequest->id,
+            'user_id' => Auth::id(),
+            'name' => Auth::user()->name,
+            'email' => Auth::user()->email,
+            'comment' => $validated['body'],
+            'approved' => true,
+        ]);
+
+        return back()->with('success', 'Комментарий добавлен');
+    }
+
+    public function userProfile(User $user)
+    {
+        $user->load(['roleRequests' => function ($query) {
+            $query->orderBy('created_at', 'desc');
+        }, 'roleRequests.comments', 'roleRequests.processedBy']);
+
+        return view('admin.user', compact('user'));
     }
 }

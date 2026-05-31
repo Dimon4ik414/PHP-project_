@@ -30,6 +30,12 @@ class RoleRequest extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'role_request_id');
+    }
+
+
     public function processedBy()
     {
         return $this->belongsTo(User::class, 'processed_by');

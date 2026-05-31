@@ -29,6 +29,11 @@ class User extends Authenticatable
         return $this->hasMany(RoleRequest::class);
     }
 
+    public function roleRequests()
+    {
+        return $this->hasMany(RoleRequest::class);
+    }
+
 
     /**
      * The attributes that are mass assignable.
